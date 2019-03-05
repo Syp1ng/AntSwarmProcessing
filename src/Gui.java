@@ -3,57 +3,57 @@ import processing.core.PApplet;
 public class Gui extends PApplet {
 private String[][] colors;
 private Physics p;
-private int heightGrid=500;
-private int widthGrid=500;
-private int rectSize=5;
+private int gridsInX =100;
+private int gridsInY =100;
+private int rectSize=4;
+private int restartButtonHight =20;
     public void settings() {
-        size(widthGrid+rectSize, heightGrid+rectSize);
+        size(gridsInY *rectSize, gridsInX *rectSize+restartButtonHight);
 
     }
     public void setup(){
-        background(155,155,0);
-        p= new Physics();
+        background(0xff0097);
+        p= new Physics(gridsInX, gridsInY);
     }
     public void draw(){
-        for(int i=0; i<widthGrid;){
-            for(int j = 0;j<heightGrid; ){
-                fill(155,155,155,1);
-                rect(i,j,20,20);
-                j+=20;
-            }
-            i+=20;
-        }
-    }
-    public void update(){
         colors=p.get_data();
-        for (var i = 0; i < widthGrid ; i++) {
-            for (var ii = 0; ii < heightGrid; ii++) {
-                String stringThisRect = colors[i][ii];
-                int[] colorThisRect =colorStringToInt(stringThisRect);
+        for (int x = 0; x < gridsInY; x++) {
+            for (int y = 0; y < gridsInX; y++) {
+                String stringThisRect = colors[x][y];
+                String[] colorThisRect =colorStringToInt(stringThisRect);
                 if(colorThisRect.length==3){
-                    fill(colorThisRect[0],colorThisRect[1], colorThisRect[2]);
+                    fill(Integer.valueOf(colorThisRect[0]),Integer.valueOf(colorThisRect[1]), Integer.valueOf(colorThisRect[2]));
                 }
                 else{
-                    fill(colorThisRect[0],colorThisRect[1], colorThisRect[2],colorThisRect[3]);
+                    fill(Integer.valueOf(colorThisRect[0]),Integer.valueOf(colorThisRect[1])
+                            , Integer.valueOf(colorThisRect[2]), Math.round(Double.valueOf(colorThisRect[3])*255));
                 }
                 noStroke();
-                rect(i,ii,rectSize,rectSize);
-                ii+=rectSize;
+                rect(x*rectSize,y*rectSize,rectSize,rectSize);
             }
-            i+=rectSize;
+        }
+        p.run_time_step();
+
+
+        rect(rectSize*gridsInX, rectSize*gridsInY,restartButtonHight, gridsInY*rectSize);
+        textSize(32);
+        text("Restart",rectSize*gridsInX+restartButtonHight, rectSize*gridsInY);
+        //RestartButon
+        if(mousePressed){
+            if(mouseY>rectSize*gridsInY){
+                p = new Physics(gridsInX, gridsInY);
+            }
         }
     }
-
-    private int[] colorStringToInt(String s){
-
-
-        return null;
+    private String[] colorStringToInt(String s){
+        s = s.replace( "rgb(", "" );
+        s = s.replace("rgba","");
+        s = s.replace( ")", "" );
+        s = s.replace( "(", "" );
+        s = s.replace( " ", "" );
+        String[] splits =s.split(",");
+        return splits;
     }
-    /*
-        for (var i = 0; i < grid_length; i++) {
-        _data[i] = [];
-        for (var ii = 0; ii < grid_length; ii++){
-            _data[i][ii] = color_for_cell(data[i][ii]);
-        }
-    }*/
+
+
 }

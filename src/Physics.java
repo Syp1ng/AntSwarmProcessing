@@ -2,22 +2,22 @@ import java.util.Random;
 
 public class Physics extends Application {
 
-    //Starts here..............................
-    //copied text from http://www.natureincode.com/code/various/ants.html
-    //just need to manage from js to java. vars-> int/doble etc functions
     Random rand = new Random();
-
-    public Physics() {
-        for(int x=0;x< sizeX;x++){
-            for(int y=0;y<sizeY;y++){
-
+    public Physics(int sizeX, int sizeY) {
+        grid_length = sizeX;
+        _data = new String[sizeX][sizeY];
+        grid = new Cell[sizeX][sizeY];
+        temp_grid = new Cell[sizeX][sizeY];
+        this.sizeX = sizeX;
+        this.sizeY = sizeY;
+        for(int x=0;x< sizeX;x++) {
+            for (int y = 0; y < sizeY; y++) {
+                grid[x][y] = new Cell();
+                temp_grid[x][y] = new Cell();
             }
         }
-
-
         place_food();
-
-
+        run_time_step();
     }
 
     private int grid_length = 500;
@@ -30,21 +30,13 @@ public class Physics extends Application {
     int max_ants_on_grid = 100;
     int ants_out_of_nest = 0;
 
-    public void draw_grid(String[] data) {
-        int width = 600;
-        int height = 600;
-        int grid_length = data.length;
-        double width_cell = width / grid_length;
-        double height_cell = height / grid_length;
-
-    }
         private String  color_for_cell(Cell cell){
             if (cell.hasAnt()) {
                 return cell.getAnt().has_food ? "rgb(159,248,101)" : "rgb(0,0,0)";
             } else if (cell.getFood() > 0) {
                 return "rgba(86,169,46," + Math.pow(cell.getFood() / 10, 0.5) + ")";
             } else {
-                if (cell.getSignal() > 0) {
+                if (cell.getSignal() > 0.0) {
                     double signal = cell.getSignal() > 1 ? 1 : cell.getSignal();
                     return "rgba(17,103,189," + signal + ")";
                 } else return "rgb(250,250,250)";
@@ -79,9 +71,18 @@ public class Physics extends Application {
             move_ants();
             check_for_food();
             sense_signal();
+            generateGuiData();
         }
 
-        public void sense_signal () {
+    private void generateGuiData() {
+            for(int x =0; x<sizeX;x++){
+                for(int y = 0; y<sizeY;y++){
+                    _data[x][y] = color_for_cell(grid[x][y]);
+                }
+            }
+    }
+
+    public void sense_signal () {
             for (int x = 0; x < grid_length; x = x + 1) {
                 for (int y = 0; y < grid_length; y = y + 1) {
                     if (grid[x][y].hasAnt()) {
@@ -146,22 +147,22 @@ public class Physics extends Application {
             return coords;
         }
 
-        private int move_ant (int x, int y){
-            int j, jj;
+        private void move_ant (int x, int y){
+            int newX, newY;
             int[] newCordsArray;
             if (grid[x][y].getAnt().has_food) {
                 var current_distance = calc_distance_to_nest(x, y);
                 do {
                     grid[x][y].getAnt().orientation = Math.random() * 360;
                     newCordsArray = get_coords_from_orientation(x, y);
-                    j = newCordsArray[0];
-                    jj = newCordsArray[1];
-                } while (calc_distance_to_nest(j, jj) >= current_distance);
+                    newX = newCordsArray[0];
+                    newY = newCordsArray[1];
+                } while (calc_distance_to_nest(newX, newY) >= current_distance);
             } else {
                 // random movement in case there is no signal
                 newCordsArray = get_coords_from_orientation(x, y);
-                int j = newCordsArray[0];
-                int jj = newCordsArray[1];
+                newX = newCordsArray[0];
+                newY = newCordsArray[1];
                 grid[x][y].getAnt().orientation += Math.random() * 45 - 22.5;
                 // let's check for some signal
                 double last = grid[x][y].getAnt().last_signal;
@@ -179,13 +180,13 @@ public class Physics extends Application {
                         var diff = last - current;
                         if (last == 0) {
                             if (diff < min) {
-                                j = bounded_n_i;
-                                jj = bounded_n_ii;
+                                newX = bounded_n_i;
+                                newY = bounded_n_ii;
                             }
                         } else {
                             if (diff > max) {
-                                j = bounded_n_i;
-                                jj = bounded_n_ii;
+                                newX = bounded_n_i;
+                                newY = bounded_n_ii;
                             }
                         }
                     }
@@ -194,13 +195,13 @@ public class Physics extends Application {
             // some randomness
             if (Math.random() < 0.05) {
                 newCordsArray = get_random_coordinates(x, y);
-                j = newCordsArray[0];
-                jj = newCordsArray[1];
+                newX = newCordsArray[0];
+                newY = newCordsArray[1];
             }
             // now that we have new coords:
-            if (!temp_grid[j][jj].has_ant()) {
+            if (!temp_grid[newX][newY].hasAnt()) {
                 // adjust reference
-                temp_grid[j][jj].setAnt(temp_grid[x][y].getAnt());
+                temp_grid[newX][newY].setAnt(temp_grid[x][y].getAnt());
                 temp_grid[x][y].setAnt(null);
             }
         }
@@ -255,5 +256,10 @@ public class Physics extends Application {
 
     public String[][] get_data() {
         return _data;
+    }
+
+    public void restart() {
+            temp_grid = null;
+            grid= null;
     }
 }

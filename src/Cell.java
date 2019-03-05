@@ -21,22 +21,6 @@ public class Cell {
         this.food = food;
     }
 
-    public int getI() {
-        return i;
-    }
-
-    public void setI(int i) {
-        this.i = i;
-    }
-
-    public int getIi() {
-        return ii;
-    }
-
-    public void setIi(int ii) {
-        this.ii = ii;
-    }
-
     public double getSignal() {
         return signal;
     }
@@ -46,7 +30,5 @@ public class Cell {
     }
 
     private int food;
-    private  int i;
-    private  int ii;
     private double signal;
     }
