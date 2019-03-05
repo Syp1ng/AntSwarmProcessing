@@ -8,7 +8,16 @@ public class Physics extends Application {
     Random rand = new Random();
 
     public Physics() {
+        for(int x=0;x< sizeX;x++){
+            for(int y=0;y<sizeY;y++){
+
+            }
+        }
+
+
         place_food();
+
+
     }
 
     private int grid_length = 500;
@@ -16,10 +25,9 @@ public class Physics extends Application {
     String _data[][]; // data from previous update
     //int grid_length = 150;
     Cell[][] grid;
-    Cell[][] temp_grid[];
-    var population = [];
+    Cell[][] temp_grid;
+    int sizeX, sizeY;
     int max_ants_on_grid = 100;
-    int ms_between_updates = 33;
     int ants_out_of_nest = 0;
 
     public void draw_grid(String[] data) {
@@ -31,53 +39,38 @@ public class Physics extends Application {
 
     }
         private String  color_for_cell(Cell cell){
-            if (cell.has_ant()) {
-                return cell.ant.has_food ? "rgb(159,248,101)" : "rgb(0,0,0)";
-            } else if (cell.food > 0) {
-                return "rgba(86,169,46," + Math.pow(cell.food / 10, 0.5) + ")";
+            if (cell.hasAnt()) {
+                return cell.getAnt().has_food ? "rgb(159,248,101)" : "rgb(0,0,0)";
+            } else if (cell.getFood() > 0) {
+                return "rgba(86,169,46," + Math.pow(cell.getFood() / 10, 0.5) + ")";
             } else {
-                if (cell.signal > 0) {
-                    var signal = cell.signal > 1 ? 1 : cell.signal;
-                    return "rgba(17,103,189," + cell.signal + ")";
+                if (cell.getSignal() > 0) {
+                    double signal = cell.getSignal() > 1 ? 1 : cell.getSignal();
+                    return "rgba(17,103,189," + signal + ")";
                 } else return "rgb(250,250,250)";
             }
         }
 
-        private double opacity_for_signal(Cell cell) {
-            return cell.has_ant() ? "1.0" : cell.signal;
+        private String opacity_for_signal(Cell cell) {
+            return cell.hasAnt() ? "1.0" : String.valueOf(cell.getSignal());
         }
 
         double to_radians(double degrees){
 
             return degrees * Math.PI / 180;
         }
-        double to_degrees(double radians){
-            return radians * 180 / Math.PI;
-        }
-
-
-        function init_grids () {
-            for (var i = 0; i < grid_length; i = i + 1) {
-                grid[i] = [];
-                temp_grid[i] = [];
-                for (var ii = 0; ii < grid_length; ii = ii + 1) {
-                    grid[i][ii] = new Cell(i, ii);
-                    temp_grid[i][ii] = new Cell(i, ii);
-                }
-            }
-        }
 
         public void place_food () {
-            var center_i = Math.round(grid_length * 0.8);
-            var center_ii = center_i;
+            int centerX =  Math.toIntExact(Math.round(grid_length * 0.8));
+            int centerY = centerX;
             var max_distance = grid_length / 10;
-            for (var i = center_i - max_distance; i <= center_i + max_distance; i++) {
-                for (var ii = center_ii - max_distance; ii < center_ii + max_distance; ii++) {
-                    int bounded_i = get_bounded_index(i);
-                    int bounded_ii = get_bounded_index(ii);
-                    double distance = calc_distance(center_i, center_ii, bounded_i, bounded_ii)
-                    int food_level = Math.round(10 - Math.pow(distance, 1.2));
-                    grid[i][ii].food = food_level;
+            for (int x = centerX - max_distance; x <= centerX + max_distance; x++) {
+                for (int y = centerY - max_distance; y < centerY + max_distance; y++) {
+                    int bounded_i = get_bounded_index(x);
+                    int bounded_ii = get_bounded_index(y);
+                    double distance = calc_distance(centerX, centerY, bounded_i, bounded_ii);
+                    int food_level = Math.toIntExact(Math.round(10 - Math.pow(distance, 1.2)));
+                    grid[x][y].setFood(food_level);
                 }
             }
         }
@@ -89,20 +82,20 @@ public class Physics extends Application {
         }
 
         public void sense_signal () {
-            for (var i = 0; i < grid_length; i = i + 1) {
-                for (var ii = 0; ii < grid_length; ii = ii + 1) {
-                    if (grid[i][ii].has_ant()) {
-                        grid[i][ii].ant.last_signal = grid[i][ii].signal;
+            for (int x = 0; x < grid_length; x = x + 1) {
+                for (int y = 0; y < grid_length; y = y + 1) {
+                    if (grid[x][y].hasAnt()) {
+                        grid[x][y].getAnt().last_signal = grid[x][y].getSignal();
                     }
                 }
             }
         }
 
         public void move_ants () {
-            for (var i = 0; i < grid_length; i = i + 1) {
-                for (var ii = 0; ii < grid_length; ii = ii + 1) {
-                    if (grid[i][ii].has_ant()) {
-                        move_ant(i, ii);
+            for (int x = 0; x < grid_length; x = x + 1) {
+                for (int y = 0; y < grid_length; y = y + 1) {
+                    if (grid[x][y].hasAnt()) {
+                        move_ant(x, y);
                     }
                 }
             }
@@ -110,21 +103,21 @@ public class Physics extends Application {
             for (var i = 0; i < grid_length; i = i + 1) {
                 for (var ii = 0; ii < grid_length; ii = ii + 1) {
                     // adjust reference
-                    grid[i][ii].ant = temp_grid[i][ii].ant;
-                    if (grid[i][ii].has_ant() && grid[i][ii].ant.has_food) {
+                    grid[i][ii].setAnt(temp_grid[i][ii].getAnt());
+                    if (grid[i][ii].hasAnt() && grid[i][ii].getAnt().has_food) {
                         int bounded_i = get_bounded_index(i);
                         int bounded_ii = get_bounded_index(ii);
-                        var signal_strength = 1 - Math.pow(0.5, 1 / calc_distance(i, ii, bounded_i, bounded_ii));
-                        grid[bounded_i][bounded_ii].signal += signal_strength;
+                        double signal_strength = 1 - Math.pow(0.5, 1 / calc_distance(i, ii, bounded_i, bounded_ii));
+                        grid[bounded_i][bounded_ii].setSignal(grid[bounded_i][bounded_ii].getSignal()+ signal_strength);
                         // is the ant near the nest with food? drop food
                         if (i < 5 && ii < 5) {
-                            grid[i][ii].ant.has_food = false;
+                            grid[i][ii].getAnt().has_food = false;
                         }
                     } else {
-                        grid[i][ii].signal *= 0.95;
+                        grid[i][ii].setSignal(grid[i][ii].getSignal()*0.95);
                     }
-                    if (grid[i][ii].signal < 0.05) {
-                        grid[i][ii].signal = 0;
+                    if (grid[i][ii].getSignal() < 0.05) {
+                        grid[i][ii].setSignal(0);
                     }
                 }
             }
@@ -133,53 +126,54 @@ public class Physics extends Application {
 
 
         private void move_ant_out_of_nest () {
-            var i = 0;
-            var ii = 0;
-            var new_coords = get_random_coordinates(i, ii);
-            var j = new_coords[0];
-            var jj = new_coords[1];
-            if (!grid[j][jj].has_ant() && ants_out_of_nest < max_ants_on_grid) {
-                grid[j][jj].ant = new Ant();
-                temp_grid[j][jj].ant = grid[j][jj].ant;
+            int x = 0;
+            int y = 0;
+            var new_coords = get_random_coordinates(x, y);
+            x = new_coords[0];
+            y = new_coords[1];
+            if (!grid[x][y].hasAnt() && ants_out_of_nest < max_ants_on_grid) {
+                grid[x][y].setAnt(new Ant());
+                temp_grid[x][y].setAnt(grid[x][y].getAnt());
                 ants_out_of_nest++;
             }
         }
 
-        function get_coords_from_orientation (int i, int ii){
-            var coords = [];
-            var orientation_radians = Math.to_radians(grid[i][ii].ant.orientation)
-            coords.push(get_bounded_index(Math.round(i + Math.cos(orientation_radians))));
-            coords.push(get_bounded_index(Math.round(ii + Math.sin(orientation_radians))));
+        public int[] get_coords_from_orientation (int i, int ii){
+            int coords[] = new int[2];
+            double orientation_radians = to_radians(grid[i][ii].getAnt().orientation);
+            coords[0] = get_bounded_index(Math.toIntExact(Math.round(i + Math.cos(orientation_radians))));
+            coords[1] =get_bounded_index(Math.toIntExact(Math.round(ii + Math.sin(orientation_radians))));
             return coords;
         }
 
-        private int move_ant (int i, int ii){
-            var new_coords, j, jj;
-            if (grid[i][ii].ant.has_food) {
-                var current_distance = calc_distance_to_nest(i, ii);
+        private int move_ant (int x, int y){
+            int j, jj;
+            int[] newCordsArray;
+            if (grid[x][y].getAnt().has_food) {
+                var current_distance = calc_distance_to_nest(x, y);
                 do {
-                    grid[i][ii].ant.orientation = Math.random() * 360;
-                    new_coords = get_coords_from_orientation(i, ii);
-                    j = new_coords[0];
-                    jj = new_coords[1];
+                    grid[x][y].getAnt().orientation = Math.random() * 360;
+                    newCordsArray = get_coords_from_orientation(x, y);
+                    j = newCordsArray[0];
+                    jj = newCordsArray[1];
                 } while (calc_distance_to_nest(j, jj) >= current_distance);
             } else {
                 // random movement in case there is no signal
-                new_coords = get_coords_from_orientation(i, ii);
-                int j = new_coords[0];
-                int jj = new_coords[1];
-                grid[i][ii].ant.orientation += Math.random() * 45 - 22.5;
+                newCordsArray = get_coords_from_orientation(x, y);
+                int j = newCordsArray[0];
+                int jj = newCordsArray[1];
+                grid[x][y].getAnt().orientation += Math.random() * 45 - 22.5;
                 // let's check for some signal
-                double last = grid[i][ii].ant.last_signal;
+                double last = grid[x][y].getAnt().last_signal;
                 double current;
                 var min = 0;
                 var max = 0;
-                for (var n_i = i - 1; n_i <= i + 1; n_i++) {
-                    for (var n_ii = ii - 1; n_ii <= ii + 1; n_ii++) {
+                for (var n_i = x - 1; n_i <= x + 1; n_i++) {
+                    for (var n_ii = y - 1; n_ii <= y + 1; n_ii++) {
                         int bounded_n_i = get_bounded_index(n_i);
                         int bounded_n_ii = get_bounded_index(n_ii);
-                        current = grid[bounded_n_i][bounded_n_ii].signal;
-                        if (current.signal == 0) {
+                        current = grid[bounded_n_i][bounded_n_ii].getSignal();
+                        if (current == 0) {
                             continue;
                         }
                         var diff = last - current;
@@ -199,31 +193,29 @@ public class Physics extends Application {
             }
             // some randomness
             if (Math.random() < 0.05) {
-                new_coords = get_random_coordinates(i, ii);
-                j = new_coords[0];
-                jj = new_coords[1];
+                newCordsArray = get_random_coordinates(x, y);
+                j = newCordsArray[0];
+                jj = newCordsArray[1];
             }
             // now that we have new coords:
             if (!temp_grid[j][jj].has_ant()) {
                 // adjust reference
-                temp_grid[j][jj].ant = temp_grid[i][ii].ant;
-                temp_grid[i][ii].ant = null;
+                temp_grid[j][jj].setAnt(temp_grid[x][y].getAnt());
+                temp_grid[x][y].setAnt(null);
             }
         }
 
-        public double calc_distance ( int i, int ii, int j, int jj){
-            return Math.pow(Math.pow(Math.abs(i - j), 2) + Math.pow(Math.abs(ii - jj), 2), 0.5);
+        public double calc_distance ( int x1, int y1, int x2, int y2){
+            return Math.pow(Math.pow(Math.abs(x1 - x2), 2) + Math.pow(Math.abs(y1 - y2), 2), 0.5);
         }
 
-        public double calc_distance_to_nest ( int i, int ii){
-            return calc_distance(i, ii, 0, 0);
+        public double calc_distance_to_nest ( int x, int y){
+            return calc_distance(x, y, 0, 0);
         }
 
-        public int[] get_random_coordinates ( int i, int ii){
-            Random rand = new Random();
-            //int randomNum = rand.nextInt((max - min) + 1) + min
-            int j = get_random_int(i - 1, i + 1);
-            int jj = get_random_int(ii - 1, ii + 1);
+        public int[] get_random_coordinates ( int x, int y){
+            int j = get_random_int(x - 1, x + 1);
+            int jj = get_random_int(y - 1, y + 1);
             j = get_bounded_index(j);
             jj = get_bounded_index(jj);
             int[] reValue = new int[2];
@@ -233,12 +225,13 @@ public class Physics extends Application {
         }
 
         public void check_for_food (){
-            for (var i = 0; i < grid_length; i = i + 1) {
-                for (var ii = 0; ii < grid_length; ii = ii + 1) {
-                    if (grid[i][ii].has_ant() && !grid[i][ii].ant.has_food) {
-                        if (grid[i][ii].food > 0) {
-                            grid[i][ii].ant.has_food = true;
-                            grid[i][ii].food--;
+            for (int x = 0; x < grid_length; x = x + 1) {
+                for (int y = 0; y < grid_length; y = y + 1) {
+                    if (grid[x][y].hasAnt() && !grid[x][y].getAnt().has_food) {
+                        if (grid[x][y].getFood() > 0) {
+                            grid[x][y].getAnt().has_food = true;
+
+                            grid[x][y].setFood(grid[x][y].getFood()-1);
                         }
                     }
                 }
