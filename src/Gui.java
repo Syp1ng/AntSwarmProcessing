@@ -12,6 +12,7 @@ private int restartButtonHight =20;
         size(gridsInY *rectSize, gridsInX *rectSize+restartButtonHight);
     }
     public void setup(){
+        background(0xAABBCC);
         p= new Physics(gridsInX, gridsInY);
     }
     public void draw(){
@@ -25,15 +26,14 @@ private int restartButtonHight =20;
                 }
                 else{
                     fill(Integer.valueOf(colorThisRect[0]),Integer.valueOf(colorThisRect[1]),
-                            Integer.valueOf(colorThisRect[2]),100);
-                    System.out.println(Math.round(Double.valueOf(colorThisRect[3])*255));
+                            Integer.valueOf(colorThisRect[2]), Math.round(Double.valueOf(colorThisRect[3])*255));
                 }
                 noStroke();
                 rect(x*rectSize,y*rectSize,rectSize,rectSize);
             }
         }
         p.runTimeStep();
-
+        /*
         rect(rectSize*gridsInX, rectSize*gridsInY,restartButtonHight, gridsInY*rectSize);
         textSize(32);
         text("Restart",rectSize*gridsInX+restartButtonHight, rectSize*gridsInY);
@@ -42,7 +42,7 @@ private int restartButtonHight =20;
             if(mouseY>rectSize*gridsInY){
                 p = new Physics(gridsInX, gridsInY);
             }
-        }
+        }*/
     }
     private String[] colorStringToInt(String s){
         s = s.replace( "rgb(", "" );
