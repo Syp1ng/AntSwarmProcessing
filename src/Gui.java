@@ -1,5 +1,6 @@
 import processing.core.PApplet;
 
+
 public class Gui extends PApplet {
 private String[][] colors;
 private Physics p;
@@ -24,7 +25,7 @@ private int restartButtonHight =20;
                 }
                 else{
                     fill(Integer.valueOf(colorThisRect[0]),Integer.valueOf(colorThisRect[1]),
-                            Integer.valueOf(colorThisRect[2]), Math.round(Double.valueOf(colorThisRect[3])*255));
+                            Integer.valueOf(colorThisRect[2]),100);
                     System.out.println(Math.round(Double.valueOf(colorThisRect[3])*255));
                 }
                 noStroke();
