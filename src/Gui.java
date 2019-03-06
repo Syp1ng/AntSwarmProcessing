@@ -9,14 +9,12 @@ private int rectSize=4;
 private int restartButtonHight =20;
     public void settings() {
         size(gridsInY *rectSize, gridsInX *rectSize+restartButtonHight);
-
     }
     public void setup(){
-        background(0xff0097);
         p= new Physics(gridsInX, gridsInY);
     }
     public void draw(){
-        colors=p.get_data();
+        colors=p.getGuiData();
         for (int x = 0; x < gridsInY; x++) {
             for (int y = 0; y < gridsInX; y++) {
                 String stringThisRect = colors[x][y];
@@ -25,15 +23,15 @@ private int restartButtonHight =20;
                     fill(Integer.valueOf(colorThisRect[0]),Integer.valueOf(colorThisRect[1]), Integer.valueOf(colorThisRect[2]));
                 }
                 else{
-                    fill(Integer.valueOf(colorThisRect[0]),Integer.valueOf(colorThisRect[1])
-                            , Integer.valueOf(colorThisRect[2]), Math.round(Double.valueOf(colorThisRect[3])*255));
+                    fill(Integer.valueOf(colorThisRect[0]),Integer.valueOf(colorThisRect[1]),
+                            Integer.valueOf(colorThisRect[2]), Math.round(Double.valueOf(colorThisRect[3])*255));
+                    System.out.println(Math.round(Double.valueOf(colorThisRect[3])*255));
                 }
                 noStroke();
                 rect(x*rectSize,y*rectSize,rectSize,rectSize);
             }
         }
-        p.run_time_step();
-
+        p.runTimeStep();
 
         rect(rectSize*gridsInX, rectSize*gridsInY,restartButtonHight, gridsInY*rectSize);
         textSize(32);
