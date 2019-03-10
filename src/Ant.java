@@ -1,21 +1,22 @@
 public class Ant {
-    boolean has_food = false;
-    double last_signal = 0;
+    private boolean hasFood = false;
+    private double lastSignal = 0;
+    private double orientation; //Math.random() * 90;
 
-    public boolean isHas_food() {
-        return has_food;
+    public boolean getHasFood() {
+        return hasFood;
     }
 
-    public void setHas_food(boolean has_food) {
-        this.has_food = has_food;
+    public void setHasFood(boolean has_food) {
+        this.hasFood = has_food;
     }
 
-    public double getLast_signal() {
-        return last_signal;
+    public double getLastSignal() {
+        return lastSignal;
     }
 
-    public void setLast_signal(double last_signal) {
-        this.last_signal = last_signal;
+    public void setLastSignal(double last_signal) {
+        this.lastSignal = last_signal;
     }
 
     public double getOrientation() {
@@ -25,6 +26,4 @@ public class Ant {
     public void setOrientation(double orientation) {
         this.orientation = orientation;
     }
-
-    double orientation; //Math.random() * 90;
 }

@@ -1,16 +1,18 @@
 public class Cell {
     private Ant ant;
+    private int food;
+    private double signal;
 
     public Ant getAnt() {
         return ant;
     }
-    public boolean hasAnt(){
-        if(ant!=null)return true;
-        else return false;
-    }
 
     public void setAnt(Ant ant) {
         this.ant = ant;
+    }
+
+    public boolean hasAnt() {
+        return ant != null;
     }
 
     public int getFood() {
@@ -28,7 +30,4 @@ public class Cell {
     public void setSignal(double signal) {
         this.signal = signal;
     }
-
-    private int food;
-    private double signal;
-    }
+}
