@@ -55,7 +55,7 @@ public class Physics extends Application {
 
     private void placeFood() {
         int centerX = Math.toIntExact(Math.round(gridLength * 0.8));
-        int centerY = centerX;
+        int centerY = centerX; //little bit useless but is in  JS code, and that is the specification
         int maxDistance = gridLength / 10;
         for (int x = centerX - maxDistance; x <= centerX + maxDistance; x++) {
             for (int y = centerY - maxDistance; y < centerY + maxDistance; y++) {
