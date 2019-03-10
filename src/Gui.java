@@ -1,9 +1,8 @@
 import processing.core.PApplet;
 
-
 public class Gui extends PApplet {
-    private String[][] colors;
-    private Physics p;
+    private String[][] colors; //colors to display
+    private Physics p; //where the physic happens
     private int gridLength = 130; //Square gridLength * gridLength
     private int rectSize = 5;  //Sets the size of the rectangles
     private int restartButtonHeight = 30;
@@ -19,7 +18,7 @@ public class Gui extends PApplet {
     }
 
     public void draw() {
-        p.runTimeStep();
+        p.runTimeStep(); //do physics
         colors = p.getGuiData();//get current data
         background(0xFFFFFF);
         for (int x = 0; x < gridLength; x++) {

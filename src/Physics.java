@@ -35,6 +35,7 @@ public class Physics extends Application {
     public String[][] getGuiData() {
         return guiData;
     }
+
     private String colorForCell(Cell cell) { //take it from the requirements,(Code)
         if (cell.hasAnt()) {
             return cell.getAnt().getHasFood() ? "rgb(159,248,101)" : "rgb(0,0,0)";
@@ -127,7 +128,7 @@ public class Physics extends Application {
 
 
     private void moveAntOutOfNest() {
-        int x = 0, y=0;
+        int x = 0, y = 0;
         int[] newCoords = getRandomCoordinates(x, y);
         x = newCoords[0];
         y = newCoords[1];
